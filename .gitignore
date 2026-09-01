@@ -1,0 +1,17 @@
+node_modules/
+.env
+client/node_modules/
+server/node_modules/
+client/dist/
+.DS_Store
+.vscode/
+.claude/
+.backup-before-merge-*/
+
+# Runtime file-based store — auto-created by the server on first use
+server/data/counter.json
+server/data/records.json
+
+# Uploaded application files — runtime data
+server/uploads/*
+!server/uploads/.gitkeep

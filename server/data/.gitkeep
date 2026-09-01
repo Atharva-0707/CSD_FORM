@@ -1,0 +1,6 @@
+// This directory holds runtime data files created automatically by the server.
+// counter.json  — the application-number counter
+// records.json  — the array of all saved application records
+//
+// These files are gitignored (see root .gitignore).
+// This .gitkeep file ensures the data/ folder itself exists in version control.
