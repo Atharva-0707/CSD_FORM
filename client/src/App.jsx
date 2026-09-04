@@ -768,13 +768,22 @@ export default function App() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="wz-btn-primary wz-landing-cta"
-                onClick={() => setShowInstructionsModal(true)}
-              >
-                View Important Instructions
-              </button>
+              <div className="wz-landing-cta-row">
+                <button
+                  type="button"
+                  className="wz-btn-secondary wz-landing-cta"
+                  onClick={() => setShowInstructionsModal(true)}
+                >
+                  View Important Instructions
+                </button>
+                <button
+                  type="button"
+                  className="wz-btn-primary wz-landing-cta"
+                  onClick={() => setWizardStep(3)}
+                >
+                  Proceed to Application Form →
+                </button>
+              </div>
             </section>
 
             {showInstructionsModal && (

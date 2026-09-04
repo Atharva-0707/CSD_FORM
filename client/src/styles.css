@@ -179,6 +179,14 @@ body {
   line-height: 1.45;
 }
 
+.wz-landing-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .wz-landing-cta {
   display: inline-block;
 }
