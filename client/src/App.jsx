@@ -155,6 +155,7 @@ export default function App() {
   const [captchaInput, setCaptchaInput] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
   const [loadError, setLoadError] = useState("");
+  const [showInstructionsModal, setShowInstructionsModal] = useState(false);
 
   // Field validation state
   const [errors, setErrors] = useState({});
@@ -564,6 +565,16 @@ export default function App() {
     return () => clearTimeout(id);
   }, [form, wizardStep]);
 
+  // Close the Important Instructions modal on Escape
+  useEffect(() => {
+    if (!showInstructionsModal) return;
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setShowInstructionsModal(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showInstructionsModal]);
+
   const update = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
     if (errors[key]) {
@@ -696,7 +707,7 @@ export default function App() {
           <div className="wz-instructions-wrapper">
             <section className="wz-landing-hero">
               <h1 className="wz-landing-title">
-                Canteen Smart Card — Online Application Portal
+                Canteen Smart Card — Application Form Filling Portal
               </h1>
               <p className="wz-landing-subtitle">
                 Apply for your Liquor, Grocery, or Dependent Canteen Smart Card
@@ -757,64 +768,94 @@ export default function App() {
                 </div>
               </div>
 
-              <a href="#important-instructions" className="wz-btn-primary wz-landing-cta">
-                View Important Instructions ↓
-              </a>
+              <button
+                type="button"
+                className="wz-btn-primary wz-landing-cta"
+                onClick={() => setShowInstructionsModal(true)}
+              >
+                View Important Instructions
+              </button>
             </section>
 
-            <section id="important-instructions">
-            <div className="wz-instructions-title-pill">Important Instructions</div>
+            {showInstructionsModal && (
+              <div
+                className="wz-modal-overlay"
+                role="presentation"
+                onClick={() => setShowInstructionsModal(false)}
+              >
+                <div
+                  className="wz-modal-panel"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="important-instructions-heading"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="wz-modal-close"
+                    aria-label="Close"
+                    onClick={() => setShowInstructionsModal(false)}
+                  >
+                    ×
+                  </button>
 
-            <div className="wz-instructions-card">
-              <p className="wz-instructions-intro">
-                Applicant must possess the undermentioned documents/details while registering and applying for canteen smart cards.
-              </p>
+                  <div className="wz-instructions-title-pill" id="important-instructions-heading">Important Instructions</div>
 
-              <div className="wz-inst-numbered-list">
-                <div className="wz-inst-numbered-item">
-                  1. Fill in your details on the next page. Once all the details have been completed, generate the PDF and take a printout. Affix only a high-resolution physical photograph to the printed application form. Computer-generated or photocopied photographs will not be accepted. The photograph must be duly attested. Submit the completed application form to the Canteen.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  2. Children above 10 years authorised dependent card. (Son over 25 years not authorised. No age limit for Dependent/Widowed/Divorced Daughters).
-                </div>
-                <div className="wz-inst-numbered-item">
-                  3. Payment per card Rs 165/- to PS Quick IT Pvt Ltd &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PS Quick IT Pvt Ltd sends rejection note to canteen which serves as Credit Note.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  4. Expect 2 SMS from PS Quick IT Pvt Ltd, 1st to inform application received at PS Quick IT Pvt Ltd Noida, 2nd to inform card prepared and will reach canteen in 15 working days.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  5. If you receive No SMS/Update, contact canteen or write a mail to customercare@cims-net.com giving payment and personal details.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  6. Confirm card not activated/utilised earlier in front of the customer before completing transaction.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  7. To deny misuse &amp; cyber frauds – do not give your canteen card to any other person, do not make photocopy/take photo of card. Physically destroy old/expired cards. Report loss of card by lodging FIR and report to nearest canteen.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  8. All cards to be renewed Annually from &quot;Nearest Canteen&quot; (without new application form). Show PPO/Discharge documents.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  9. Expiry of Card – 10 years from date of issue. Reapply three months before expiry. If primary grocery card is replaced, get active dependent cards relinked/surrendered and get entire grocery quota restored.
-                </div>
-                <div className="wz-inst-numbered-item">
-                  10. In case of denial of canteen facilities or any harassment please write to DDG CS, Canteen Services Directorate, QMG Branch, West Block.
+                  <div className="wz-instructions-card">
+                    <p className="wz-instructions-intro">
+                      Applicant must possess the undermentioned documents/details while registering and applying for canteen smart cards.
+                    </p>
+
+                    <div className="wz-inst-numbered-list">
+                      <div className="wz-inst-numbered-item">
+                        1. Fill in your details on the next page. Once all the details have been completed, generate the PDF and take a printout. Affix only a high-resolution physical photograph to the printed application form. Computer-generated or photocopied photographs will not be accepted. The photograph must be duly attested. Submit the completed application form to the Canteen.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        2. Children above 10 years authorised dependent card. (Son over 25 years not authorised. No age limit for Dependent/Widowed/Divorced Daughters).
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        3. Payment per card Rs 165/- to PS Quick IT Pvt Ltd &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PS Quick IT Pvt Ltd sends rejection note to canteen which serves as Credit Note.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        4. Expect 2 SMS from PS Quick IT Pvt Ltd, 1st to inform application received at PS Quick IT Pvt Ltd Noida, 2nd to inform card prepared and will reach canteen in 15 working days.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        5. If you receive No SMS/Update, contact canteen or write a mail to customercare@cims-net.com giving payment and personal details.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        6. Confirm card not activated/utilised earlier in front of the customer before completing transaction.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        7. To deny misuse &amp; cyber frauds – do not give your canteen card to any other person, do not make photocopy/take photo of card. Physically destroy old/expired cards. Report loss of card by lodging FIR and report to nearest canteen.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        8. All cards to be renewed Annually from &quot;Nearest Canteen&quot; (without new application form). Show PPO/Discharge documents.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        9. Expiry of Card – 10 years from date of issue. Reapply three months before expiry. If primary grocery card is replaced, get active dependent cards relinked/surrendered and get entire grocery quota restored.
+                      </div>
+                      <div className="wz-inst-numbered-item">
+                        10. In case of denial of canteen facilities or any harassment please write to DDG CS, Canteen Services Directorate, QMG Branch, West Block.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="wz-instructions-nav">
+                    <button
+                      id="instructions-next-btn"
+                      className="wz-btn-primary"
+                      type="button"
+                      onClick={() => {
+                        setShowInstructionsModal(false);
+                        setWizardStep(3);
+                      }}
+                    >
+                      I Understand, Proceed →
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="wz-instructions-nav">
-              <button
-                id="instructions-next-btn"
-                className="wz-btn-primary"
-                type="button"
-                onClick={() => setWizardStep(3)}
-              >
-                I Understand, Proceed →
-              </button>
-            </div>
-            </section>
+            )}
           </div>
         )}
 
