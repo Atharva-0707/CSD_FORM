@@ -149,7 +149,7 @@ export default function App() {
   const [form, setForm] = useState(emptyForm);
 
   // Wizard UI state
-  // Steps: 1 = Welcome, 2 = Instructions, 3 = Date & Verify, 4 = URC/Service/Cards, 5 = Personal, 6 = Address, 7 = Dependents, 8 = Final Action
+  // Steps: 1 = Welcome, 2 = Instructions, 3 = Verify, 4 = URC/Service/Cards, 5 = Personal, 6 = Address, 7 = Dependents, 8 = Final Action
   const [wizardStep, setWizardStep] = useState(2);
   const [captcha, setCaptcha] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
@@ -710,7 +710,7 @@ export default function App() {
                 Canteen Smart Card — Application Form Filling Portal
               </h1>
               <p className="wz-landing-subtitle">
-                Apply for your Liquor, Grocery, or Dependent Canteen Smart Card
+                Fill for your Liquor, Grocery, or Dependent Canteen Smart Card
                 entirely online. Fill in your details once, generate a
                 print-ready application, and submit it at your nearest URC /
                 Canteen.
@@ -734,25 +734,6 @@ export default function App() {
                     <div className="wz-landing-highlight-text">
                       Liquor, Grocery, and up to two Dependent cards per
                       application
-                    </div>
-                  </div>
-                </div>
-                <div className="wz-landing-highlight-item">
-                  <span className="wz-landing-highlight-icon">💰</span>
-                  <div>
-                    <div className="wz-landing-highlight-title">Fee</div>
-                    <div className="wz-landing-highlight-text">
-                      ₹165 per card to PS Quick IT Pvt Ltd + ₹5 to your canteen
-                    </div>
-                  </div>
-                </div>
-                <div className="wz-landing-highlight-item">
-                  <span className="wz-landing-highlight-icon">📩</span>
-                  <div>
-                    <div className="wz-landing-highlight-title">Processing time</div>
-                    <div className="wz-landing-highlight-text">
-                      Two SMS updates; card reaches your canteen within 15
-                      working days
                     </div>
                   </div>
                 </div>
@@ -784,16 +765,6 @@ export default function App() {
                       Children above 10 years are eligible; sons over 25 are
                       not authorised; no age limit for widowed/divorced
                       daughters
-                    </div>
-                  </div>
-                </div>
-                <div className="wz-landing-highlight-item">
-                  <span className="wz-landing-highlight-icon">🛡️</span>
-                  <div>
-                    <div className="wz-landing-highlight-title">Card security</div>
-                    <div className="wz-landing-highlight-text">
-                      Never share your card with anyone; report a lost card by
-                      lodging an FIR at your nearest canteen
                     </div>
                   </div>
                 </div>
@@ -925,7 +896,7 @@ export default function App() {
             {/* Stepper bar */}
             <div className="wz-stepper-bar" aria-hidden="true">
               {[
-                { num: 3, label: "Date & Verify" },
+                { num: 3, label: "Verify" },
                 { num: 4, label: "Card & Service" },
                 { num: 5, label: "Personal" },
                 { num: 6, label: "Address" },
@@ -949,8 +920,8 @@ export default function App() {
               <div className="wz-card">
                 <div className="wz-card-topbar">
                   <div>
-                    <div className="wz-card-topbar-title">Application Date &amp; Verification</div>
-                    <div className="wz-card-topbar-sub">Step 1 of 6 — System auto-date and security check</div>
+                    <div className="wz-card-topbar-title">Verification</div>
+                    <div className="wz-card-topbar-sub">Step 1 of 6 — Security check</div>
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>
@@ -965,43 +936,15 @@ export default function App() {
                         }
                       }}
                     >
-                      Clear Draft
+                      New Form
                     </button>
                   </div>
                 </div>
 
                 <div className="wz-card-body">
-                  {/* Application Date - Auto-filled and Locked */}
-                  <div className="wz-section">
-                    <div className="wz-section-heading">
-                      <span className="wz-section-heading-icon">📅</span>
-                      Application Details
-                    </div>
-                    <div className="wz-field-grid cols-1">
-                      <div className="wz-field">
-                        <label className="wz-label" htmlFor="applicationDate">
-                          Application Date <span className="wz-required">*</span>
-                          <span className="wz-locked-tag">🔒 Auto-Generated &amp; Locked</span>
-                        </label>
-                        <div className="wz-locked-input-wrap">
-                          <input
-                            id="applicationDate"
-                            type="text"
-                            className="wz-input wz-input-locked"
-                            style={{ maxWidth: 280 }}
-                            value={isoToDisplay(form.applicationDate)}
-                            readOnly
-                            disabled
-                            aria-readonly="true"
-                            title="Application Date is automatically generated from the creation date and cannot be changed manually."
-                          />
-                        </div>
-                        <small className="wz-helper-text">
-                          This date represents the official date of creation and cannot be edited.
-                        </small>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Application Date is generated and stored automatically in the
+                      background (see applicationDate in emptyForm / resetForm) — not
+                      shown to the end user. */}
 
                   {/* CAPTCHA */}
                   <div className="wz-section">
@@ -1082,7 +1025,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
-                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>New Form</button>
                   </div>
                 </div>
 
@@ -1293,7 +1236,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
-                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>New Form</button>
                   </div>
                 </div>
 
@@ -1616,7 +1559,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
-                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>New Form</button>
                   </div>
                 </div>
 
@@ -1748,7 +1691,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
-                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>New Form</button>
                   </div>
                 </div>
 
