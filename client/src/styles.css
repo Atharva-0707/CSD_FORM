@@ -75,14 +75,8 @@ body {
 }
 
 /* ==========================================================================
-   STEP 1 â€” WELCOME PAGE
+   SHARED HEADER (all pages)
    ========================================================================== */
-
-.wz-welcome-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 64px);
-}
 
 /* Top nav bar */
 .wz-nav-bar {
@@ -106,44 +100,6 @@ body {
   display: block;
 }
 
-/* Hero area â€” full-bleed background image (title text is baked into the image) */
-.wz-hero {
-  position: relative;
-  flex: 1;
-  overflow: hidden;
-  background-image: url('/welcome-bg.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: calc(100vh - 64px);
-  padding-bottom: 64px;
-}
-
-.wz-hero-next-btn {
-  display: block;
-  margin: 0 auto;
-  background: #e53935;
-  color: #fff;
-  border: none;
-  border-radius: 40px;
-  padding: 16px 72px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 18px rgba(229,57,53,0.45);
-  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
-  letter-spacing: 0.3px;
-}
-
-.wz-hero-next-btn:hover {
-  background: #c62828;
-  transform: translateY(-2px);
-  box-shadow: 0 7px 24px rgba(229,57,53,0.55);
-}
 
 /* ==========================================================================
    STEP 2 â€” IMPORTANT INSTRUCTIONS PAGE
@@ -240,7 +196,7 @@ body {
 
 .wz-instructions-nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 36px;
   max-width: 880px;
@@ -879,7 +835,6 @@ body {
   .print-only { display: block !important; }
   .wizard-screen { display: none !important; }
   .no-print { display: none !important; }
-  .wz-welcome-wrapper,
   .wz-instructions-wrapper,
   .wz-outer,
   .wz-card,
@@ -2907,7 +2862,6 @@ body {
   .no-print,
   .toolbar,
   .status-banner,
-  .wz-welcome-wrapper,
   .wz-instructions-wrapper,
   .wz-outer,
   .wz-card,

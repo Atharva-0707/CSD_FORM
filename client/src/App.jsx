@@ -150,7 +150,7 @@ export default function App() {
 
   // Wizard UI state
   // Steps: 1 = Welcome, 2 = Instructions, 3 = Date & Verify, 4 = URC/Service/Cards, 5 = Personal, 6 = Address, 7 = Dependents, 8 = Final Action
-  const [wizardStep, setWizardStep] = useState(1);
+  const [wizardStep, setWizardStep] = useState(2);
   const [captcha, setCaptcha] = useState("");
   const [captchaInput, setCaptchaInput] = useState("");
   const [draftMessage, setDraftMessage] = useState("");
@@ -473,7 +473,7 @@ export default function App() {
 
         setForm(merged);
       }
-      if (parsed.currentStep && parsed.currentStep >= 1 && parsed.currentStep <= 8) {
+      if (parsed.currentStep && parsed.currentStep >= 2 && parsed.currentStep <= 8) {
         setWizardStep(parsed.currentStep);
       }
     } catch (err) {
@@ -647,14 +647,14 @@ export default function App() {
     localStorage.removeItem(WIZARD_STORAGE_KEY);
     isPrintedRef.current = false;
 
-    // Reset UI state immediately so the wizard goes back to step 1
+    // Reset UI state immediately so the wizard goes back to the first page
     setForm({ ...emptyForm, applicationDate: getTodayIsoDate() });
     setErrors({});
     setTouched({});
     setDraftMessage("");
     setLoadError("");
     generateCaptcha();
-    setWizardStep(1);
+    setWizardStep(2);
 
     // Fetch the next sequential number from the server
     const num = await fetchNextApplicationNumber();
@@ -685,30 +685,12 @@ export default function App() {
 
       {/* =====================================================================
           WIZARD UI — screen only, hidden during print
-          8 steps: 1=Welcome, 2=Instructions, 3-8=Form steps (1-6 visually)
+          7 steps: 2=Instructions (first page), 3-8=Form steps (1-6 visually)
           NO PHOTO/SIGNATURE SECTIONS IN WIZARD UI
           ===================================================================== */}
       <div className="no-print" role="region" aria-label="Application Wizard">
         {/* ------------------------------------------------------------------ */}
-        {/* STEP 1: WELCOME PAGE                                                */}
-        {/* ------------------------------------------------------------------ */}
-        {wizardStep === 1 && (
-          <div className="wz-welcome-wrapper">
-            <div className="wz-hero">
-              <button
-                id="welcome-next-btn"
-                className="wz-hero-next-btn"
-                type="button"
-                onClick={() => setWizardStep(2)}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------------ */}
-        {/* STEP 2: IMPORTANT INSTRUCTIONS                                      */}
+        {/* STEP 2: IMPORTANT INSTRUCTIONS (first page)                        */}
         {/* ------------------------------------------------------------------ */}
         {wizardStep === 2 && (
           <div className="wz-instructions-wrapper">
@@ -727,10 +709,10 @@ export default function App() {
                   2. Children above 10 years authorised dependent card. (Son over 25 years not authorised. No age limit for Dependent/Widowed/Divorced Daughters).
                 </div>
                 <div className="wz-inst-numbered-item">
-                  3. Payment per card Rs 165/- to PSQ &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PSQ sends rejection note to canteen which serves as Credit Note.
+                  3. Payment per card Rs 165/- to PS Quick IT Pvt Ltd &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PS Quick IT Pvt Ltd sends rejection note to canteen which serves as Credit Note.
                 </div>
                 <div className="wz-inst-numbered-item">
-                  4. Expect 2 SMS from PSQ, 1st to inform application received at PSQ Noida, 2nd to inform card prepared and will reach canteen in 15 working days.
+                  4. Expect 2 SMS from PS Quick IT Pvt Ltd, 1st to inform application received at PS Quick IT Pvt Ltd Noida, 2nd to inform card prepared and will reach canteen in 15 working days.
                 </div>
                 <div className="wz-inst-numbered-item">
                   5. If you receive No SMS/Update, contact canteen or write a mail to customercare@cims-net.com giving payment and personal details.
@@ -754,14 +736,6 @@ export default function App() {
             </div>
 
             <div className="wz-instructions-nav">
-              <button
-                id="instructions-prev-btn"
-                className="wz-btn-secondary"
-                type="button"
-                onClick={() => setWizardStep(1)}
-              >
-                ← Previous
-              </button>
               <button
                 id="instructions-next-btn"
                 className="wz-btn-primary"
@@ -2171,8 +2145,8 @@ function PrintableTabularSummary({ form }) {
             <div className="pr-inst-column">
               <div className="pr-inst-item"><span className="pr-inst-num">1.</span><span>Fill in your details on the next page. Once all the details have been completed, generate the PDF and take a printout. Affix only a high-resolution physical photograph to the printed application form. Computer-generated or photocopied photographs will not be accepted. The photograph must be duly attested. Submit the completed application form to the Canteen.</span></div>
               <div className="pr-inst-item"><span className="pr-inst-num">2.</span><span>Children above 10 years authorised dependent card. (Son over 25 years not authorised. No age limit for Dependent/Widowed/Divorced Daughters).</span></div>
-              <div className="pr-inst-item"><span className="pr-inst-num">3.</span><span>Payment per card Rs 165/- to PSQ &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PSQ sends rejection note to canteen which serves as Credit Note.</span></div>
-              <div className="pr-inst-item"><span className="pr-inst-num">4.</span><span>Expect 2 SMS from PSQ, 1st to inform application received at PSQ Noida, 2nd to inform card prepared and will reach canteen in 15 working days.</span></div>
+              <div className="pr-inst-item"><span className="pr-inst-num">3.</span><span>Payment per card Rs 165/- to PS Quick IT Pvt Ltd &amp; Rs 5/- to canteen. Do not pay twice if reapplying due to rejection. PS Quick IT Pvt Ltd sends rejection note to canteen which serves as Credit Note.</span></div>
+              <div className="pr-inst-item"><span className="pr-inst-num">4.</span><span>Expect 2 SMS from PS Quick IT Pvt Ltd, 1st to inform application received at PS Quick IT Pvt Ltd Noida, 2nd to inform card prepared and will reach canteen in 15 working days.</span></div>
               <div className="pr-inst-item"><span className="pr-inst-num">5.</span><span>If you receive No SMS/Update, contact canteen or write a mail to customercare@cims-net.com giving payment and personal details.</span></div>
             </div>
             <div className="pr-inst-column">
