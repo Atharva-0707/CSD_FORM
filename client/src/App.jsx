@@ -694,6 +694,75 @@ export default function App() {
         {/* ------------------------------------------------------------------ */}
         {wizardStep === 2 && (
           <div className="wz-instructions-wrapper">
+            <section className="wz-landing-hero">
+              <h1 className="wz-landing-title">
+                Canteen Smart Card — Online Application Portal
+              </h1>
+              <p className="wz-landing-subtitle">
+                Apply for your Liquor, Grocery, or Dependent Canteen Smart Card
+                entirely online. Fill in your details once, generate a
+                print-ready application, and submit it at your nearest URC /
+                Canteen.
+              </p>
+
+              <div className="wz-landing-highlights">
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">🎖️</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Who can apply</div>
+                    <div className="wz-landing-highlight-text">
+                      ESM, Widow, NOK, EC, WW Veteran &amp; SSC personnel of the
+                      Army, Navy, Air Force and allied forces
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">💳</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Card types</div>
+                    <div className="wz-landing-highlight-text">
+                      Liquor, Grocery, and up to two Dependent cards per
+                      application
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">💰</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Fee</div>
+                    <div className="wz-landing-highlight-text">
+                      ₹165 per card to PS Quick IT Pvt Ltd + ₹5 to your canteen
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">📩</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Processing time</div>
+                    <div className="wz-landing-highlight-text">
+                      Two SMS updates; card reaches your canteen within 15
+                      working days
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">🔄</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Validity</div>
+                    <div className="wz-landing-highlight-text">
+                      10 years from date of issue — renew annually at your
+                      nearest canteen
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <a href="#important-instructions" className="wz-btn-primary wz-landing-cta">
+                View Important Instructions ↓
+              </a>
+            </section>
+
+            <section id="important-instructions">
             <div className="wz-instructions-title-pill">Important Instructions</div>
 
             <div className="wz-instructions-card">
@@ -745,6 +814,7 @@ export default function App() {
                 I Understand, Proceed →
               </button>
             </div>
+            </section>
           </div>
         )}
 
