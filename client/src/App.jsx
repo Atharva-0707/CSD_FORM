@@ -1158,6 +1158,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
                   </div>
                 </div>
 
@@ -1480,6 +1481,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
                   </div>
                 </div>
 
@@ -1611,6 +1613,7 @@ export default function App() {
                   </div>
                   <div className="wz-draft-actions">
                     <button className="wz-btn-draft" type="button" onClick={() => saveWizardToLocalStorage({ notify: true })}>Save Draft</button>
+                    <button className="wz-btn-draft" type="button" onClick={() => { if (confirm("Clear local draft and reset form?")) { resetForm(); } }}>Clear Draft</button>
                   </div>
                 </div>
 
@@ -1618,7 +1621,10 @@ export default function App() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
                     {/* Dependent 1 */}
                     <div className="wz-dep-card">
-                      <div className="wz-dep-card-title">👤 Dependent 1 (Optional)</div>
+                      <div className="wz-section-heading">
+                        <span className="wz-section-heading-icon">👤</span>
+                        Dependent 1 (Optional)
+                      </div>
                       <div className="wz-field" style={{ marginBottom: 14 }}>
                         <label className="wz-label" htmlFor="dep1name">Full Name</label>
                         <input
@@ -1666,7 +1672,10 @@ export default function App() {
 
                     {/* Dependent 2 */}
                     <div className="wz-dep-card">
-                      <div className="wz-dep-card-title">👤 Dependent 2 (Optional)</div>
+                      <div className="wz-section-heading">
+                        <span className="wz-section-heading-icon">👤</span>
+                        Dependent 2 (Optional)
+                      </div>
                       <div className="wz-field" style={{ marginBottom: 14 }}>
                         <label className="wz-label" htmlFor="dep2name">Full Name</label>
                         <input
