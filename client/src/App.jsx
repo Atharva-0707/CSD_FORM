@@ -7,6 +7,17 @@ const cardCategories = ["Officer", "JCO", "OR"];
 const cardOptions = ["Liquor", "Grocery", "Dependent1", "Dependent2"];
 const payLevels = ["Level 1 to 5", "Level 6 to 9", "Level 10 to 18"];
 
+// TODO: placeholder values — replace with the real 7 card type names.
+const cardTypeOptions = [
+  "Card Type 1",
+  "Card Type 2",
+  "Card Type 3",
+  "Card Type 4",
+  "Card Type 5",
+  "Card Type 6",
+  "Card Type 7",
+];
+
 // Helper to get today's date in YYYY-MM-DD format
 function getTodayIsoDate() {
   const d = new Date();
@@ -71,6 +82,7 @@ const emptyForm = {
   applicationNumber: "",
   applicationType: "firstTime",
   applicationDate: getTodayIsoDate(),
+  cardType: "",
 
   urcNo: "",
   urcName: "",
@@ -178,6 +190,10 @@ export default function App() {
         if (captcha.trim().toUpperCase() !== captchaInput.trim().toUpperCase()) {
           return "CAPTCHA code does not match. Please try again.";
         }
+        return "";
+      }
+      case "cardType": {
+        if (!value) return "Please select a Card Type.";
         return "";
       }
       case "urcNo": {
@@ -341,6 +357,8 @@ export default function App() {
     const stepErrors = {};
 
     if (step === 3) {
+      const ctErr = validateField("cardType", form.cardType);
+      if (ctErr) stepErrors.cardType = ctErr;
       const cErr = validateField("captcha", captchaInput);
       if (cErr) stepErrors.captcha = cErr;
     } else if (step === 4) {
@@ -945,6 +963,36 @@ export default function App() {
                   {/* Application Date is generated and stored automatically in the
                       background (see applicationDate in emptyForm / resetForm) — not
                       shown to the end user. */}
+
+                  {/* Card Type */}
+                  <div className="wz-section">
+                    <div className="wz-section-heading">
+                      <span className="wz-section-heading-icon">💳</span>
+                      Select Card Type
+                    </div>
+                    <div className={`wz-field ${touched.cardType && errors.cardType ? "has-error" : ""}`}>
+                      <label className="wz-label">
+                        Which card do you want to apply for? <span className="wz-required">*</span>
+                      </label>
+                      <div className="wz-option-group">
+                        {cardTypeOptions.map((opt) => (
+                          <label key={opt} className={`wz-option-pill ${form.cardType === opt ? "selected" : ""}`}>
+                            <input
+                              type="radio"
+                              name="cardType"
+                              checked={form.cardType === opt}
+                              onChange={() => update("cardType", opt)}
+                              onBlur={() => handleBlur("cardType")}
+                            />
+                            {opt}
+                          </label>
+                        ))}
+                      </div>
+                      {touched.cardType && errors.cardType && (
+                        <div className="wz-error-msg">{errors.cardType}</div>
+                      )}
+                    </div>
+                  </div>
 
                   {/* CAPTCHA */}
                   <div className="wz-section">
@@ -2001,6 +2049,10 @@ function PrintableTabularSummary({ form }) {
             {/* Section 2: Service & Card Category Details */}
             <tr className="pr-section-header-row">
               <td colSpan={4}>2. SERVICE &amp; CARD DETAILS</td>
+            </tr>
+            <tr>
+              <td className="pr-field-cell">Card Type</td>
+              <td className="pr-val-cell font-bold" colSpan={3}>{getVal(form.cardType)}</td>
             </tr>
             <tr>
               <td className="pr-field-cell">Service Branch</td>
