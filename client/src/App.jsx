@@ -766,6 +766,47 @@ export default function App() {
                     </div>
                   </div>
                 </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">📝</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">How it works</div>
+                    <div className="wz-landing-highlight-text">
+                      Fill the form online, print the generated application,
+                      attach an attested photo, and submit it at your canteen
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">👨‍👩‍👧</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Dependent card rules</div>
+                    <div className="wz-landing-highlight-text">
+                      Children above 10 years are eligible; sons over 25 are
+                      not authorised; no age limit for widowed/divorced
+                      daughters
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">🛡️</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Card security</div>
+                    <div className="wz-landing-highlight-text">
+                      Never share your card with anyone; report a lost card by
+                      lodging an FIR at your nearest canteen
+                    </div>
+                  </div>
+                </div>
+                <div className="wz-landing-highlight-item">
+                  <span className="wz-landing-highlight-icon">✉️</span>
+                  <div>
+                    <div className="wz-landing-highlight-title">Need help?</div>
+                    <div className="wz-landing-highlight-text">
+                      No SMS update? Write to customercare@cims-net.com with
+                      your payment and personal details
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="wz-landing-cta-row">
