@@ -173,9 +173,14 @@ router.post("/", uploadFields, async (req, res) => {
        VALIDATE REQUIRED FIELDS
        ----------------------------------------------------- */
 
-    const applicationNumber = Number(body.applicationNumber);
-
-    if (!Number.isFinite(applicationNumber)) {
+    let applicationNumber = body.applicationNumber;
+    if (applicationNumber === undefined || applicationNumber === null || String(applicationNumber).trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "A valid applicationNumber is required.",
+      });
+    }
+    if (typeof applicationNumber === "number" && !Number.isFinite(applicationNumber)) {
       return res.status(400).json({
         success: false,
         message: "A valid applicationNumber is required.",
@@ -197,6 +202,7 @@ router.post("/", uploadFields, async (req, res) => {
       applicationNumber,
 
       applicationType: body.applicationType,
+      selectedFormType: body.selectedFormType,
 
       /* ===================================================
          APPLICANT FILES
@@ -257,6 +263,29 @@ router.post("/", uploadFields, async (req, res) => {
       /* ===================================================
          BASIC DETAILS
          =================================================== */
+
+      statusOption: body.statusOption,
+      modDepartment: body.modDepartment,
+      modDeptOther: body.modDeptOther,
+
+      cadreOrganisation: body.cadreOrganisation,
+      currentDept: body.currentDept,
+      parentCadre: body.parentCadre,
+      deputationDept: body.deputationDept,
+      deputationFrom: body.deputationFrom,
+      deputationTo: body.deputationTo,
+
+      payAccountNo: body.payAccountNo,
+      designation: body.designation,
+      ppoDate: body.ppoDate,
+      oldCadetCardId: body.oldCadetCardId,
+      oldGroceryCardId: body.oldGroceryCardId,
+      likelyCommissioningDate: body.likelyCommissioningDate,
+      dateOfEnrolment: body.dateOfEnrolment,
+      dateOfRelease: body.dateOfRelease,
+      oldPersonalNumber: body.oldPersonalNumber,
+      heldCardNo: body.heldCardNo,
+      nokName: body.nokName,
 
       urcNo: body.urcNo,
       urcName: body.urcName,
