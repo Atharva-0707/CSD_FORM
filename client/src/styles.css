@@ -2579,6 +2579,15 @@ body {
   margin-top: 1px;
 }
 
+.pr-header-note {
+  font-size: 8px;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+  margin-top: 1px;
+  color: #374151;
+}
+
 .pr-instructions-bar {
   font-size: 8.5px;
   color: #374151;
@@ -2671,6 +2680,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 68px;
+  background: #ffffff;
 }
 
 .pr-sig-placeholder-label {
@@ -2852,7 +2862,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  background: #ffffff;
 }
 
 .pr-decl-sig-label {
@@ -2944,34 +2954,30 @@ body {
 }
 
 .pr-dep-sig-box {
-  border: 1px dashed #000000;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding: 2px;
   box-sizing: border-box;
-  background: #ffffff;
 }
 
 .pr-dep-sig-blank {
-  font-size: 7.6px;
-  color: #9ca3af;
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px dashed #000000;
+  background: #ffffff;
+  width: 100%;
   flex-grow: 1;
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .pr-dep-sig-label {
   font-size: 7.6px;
   font-weight: 700;
   color: #000000;
-  border-top: 0.5px solid #d1d5db;
   width: 100%;
+  margin-top: 2px;
 }
 
 /* Page 2 - Receipt for Applicant (Multi-Row Structured Official Format) */
@@ -3047,7 +3053,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  background: #ffffff;
 }
 
 .pr-receipt-stamp-placeholder {
@@ -3107,7 +3113,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fafafa;
+  background: #ffffff;
   text-align: center;
 }
 

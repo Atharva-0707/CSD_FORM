@@ -280,6 +280,7 @@ router.post("/", uploadFields, async (req, res) => {
       ppoDate: body.ppoDate,
       oldCadetCardId: body.oldCadetCardId,
       oldGroceryCardId: body.oldGroceryCardId,
+      oldLiquorCardId: body.oldLiquorCardId,
       likelyCommissioningDate: body.likelyCommissioningDate,
       dateOfEnrolment: body.dateOfEnrolment,
       dateOfRelease: body.dateOfRelease,

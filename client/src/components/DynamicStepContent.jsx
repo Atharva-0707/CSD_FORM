@@ -63,13 +63,13 @@ export default function DynamicStepContent({
           <div className="wz-field-grid">
             <div className={`wz-field ${touched.urcNo && errors.urcNo ? "has-error" : ""}`}>
               <label className="wz-label" htmlFor="urcNo">
-                URC No. {config.prefix === "OE" && selectedFormType === "retiringArmedForcesChangeCategory" ? "(Applied From)" : ""} <span className="wz-required">*</span>
+                URC No. {config.prefix === "OE" && selectedFormType === "retiringArmedForcesChangeCategory" ? "(Applied From)" : ""}
               </label>
               <input
                 id="urcNo"
                 type="text"
                 className={`wz-input ${touched.urcNo && errors.urcNo ? "input-error" : ""}`}
-                placeholder="Enter URC Number"
+                placeholder="Enter URC Number (Optional)"
                 value={form.urcNo || ""}
                 onChange={(e) => update("urcNo", e.target.value.toUpperCase())}
                 onBlur={() => handleBlur("urcNo")}
@@ -79,13 +79,13 @@ export default function DynamicStepContent({
 
             <div className={`wz-field ${touched.urcName && errors.urcName ? "has-error" : ""}`}>
               <label className="wz-label" htmlFor="urcName">
-                URC Name {config.prefix === "OE" && selectedFormType === "retiringArmedForcesChangeCategory" ? "(Applied From)" : ""} <span className="wz-required">*</span>
+                URC Name {config.prefix === "OE" && selectedFormType === "retiringArmedForcesChangeCategory" ? "(Applied From)" : ""}
               </label>
               <input
                 id="urcName"
                 type="text"
                 className={`wz-input ${touched.urcName && errors.urcName ? "input-error" : ""}`}
-                placeholder="Enter URC Name"
+                placeholder="Enter URC Name (Optional)"
                 value={form.urcName || ""}
                 onChange={(e) => update("urcName", e.target.value.toUpperCase())}
                 onBlur={() => handleBlur("urcName")}
@@ -326,15 +326,19 @@ export default function DynamicStepContent({
     const isCadet = selectedFormType === "cadetRecruit";
     const isAgniveer = selectedFormType === "agniveer";
     const isCivilDefence = config.isCivilDefence;
+    const isJoiningRequired = ["cadetRecruit", "civilDefenceRetired", "civilDefenceServing", "esmPensionerWidowNok", "retiringArmedForcesChangeCategory", "servingArmedForces"].includes(selectedFormType);
+    const isLikelyCommissioningRequired = selectedFormType === "cadetRecruit";
+    const isRetirementRequired = ["civilDefenceRetired", "civilDefenceServing", "esmPensionerWidowNok", "retiringArmedForcesChangeCategory", "servingArmedForces"].includes(selectedFormType);
 
     return (
       <>
         {/* Application Type */}
-        <div className="wz-section">
-          <div className="wz-section-heading">
-            <span className="wz-section-heading-icon">📝</span>
-            Application Type
-          </div>
+        {!config.isCivilDefence && (
+          <div className="wz-section">
+            <div className="wz-section-heading">
+              <span className="wz-section-heading-icon">📝</span>
+              Application Type
+            </div>
           <div className="wz-field-grid">
             <div className="wz-field">
               <label className="wz-label">
@@ -363,31 +367,158 @@ export default function DynamicStepContent({
             </div>
 
             {/* Reapplying Old Card ID */}
-            <div className={`wz-field ${touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] ? "has-error" : ""}`}>
-              <label
-                className="wz-label"
-                htmlFor="oldCardIdInput"
-                style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
-              >
-                {config.reapplyingOldCardLabel}{" "}
-                {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
-              </label>
-              <input
-                id="oldCardIdInput"
-                type="text"
-                className={`wz-input ${touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] ? "input-error" : ""}`}
-                placeholder="Old Card ID"
-                disabled={form.applicationType === "firstTime"}
-                value={form[config.reapplyingOldCardField] || ""}
-                onChange={(e) => update(config.reapplyingOldCardField, e.target.value.toUpperCase())}
-                onBlur={() => handleBlur(config.reapplyingOldCardField)}
-              />
-              {touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] && (
-                <div className="wz-error-msg">{errors[config.reapplyingOldCardField]}</div>
-              )}
-            </div>
+            {selectedFormType === "agniveer" ? (
+              form.cardApplied?.includes("Liquor") && form.cardApplied?.includes("Grocery") ? (
+                <>
+                  <div className={`wz-field ${touched.oldLiquorCardId && errors.oldLiquorCardId ? "has-error" : ""}`}>
+                    <label
+                      className="wz-label"
+                      htmlFor="oldLiquorCardIdInput"
+                      style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                    >
+                      Old Liquor Card ID{" "}
+                      {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                    </label>
+                    <input
+                      id="oldLiquorCardIdInput"
+                      type="text"
+                      className={`wz-input ${touched.oldLiquorCardId && errors.oldLiquorCardId ? "input-error" : ""}`}
+                      placeholder="Old Liquor Card ID"
+                      disabled={form.applicationType === "firstTime"}
+                      value={form.oldLiquorCardId || ""}
+                      onChange={(e) => update("oldLiquorCardId", e.target.value.toUpperCase())}
+                      onBlur={() => handleBlur("oldLiquorCardId")}
+                    />
+                    {touched.oldLiquorCardId && errors.oldLiquorCardId && (
+                      <div className="wz-error-msg">{errors.oldLiquorCardId}</div>
+                    )}
+                  </div>
+
+                  <div className={`wz-field ${touched.oldGroceryCardId && errors.oldGroceryCardId ? "has-error" : ""}`}>
+                    <label
+                      className="wz-label"
+                      htmlFor="oldGroceryCardIdInput"
+                      style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                    >
+                      Old Grocery Card ID{" "}
+                      {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                    </label>
+                    <input
+                      id="oldGroceryCardIdInput"
+                      type="text"
+                      className={`wz-input ${touched.oldGroceryCardId && errors.oldGroceryCardId ? "input-error" : ""}`}
+                      placeholder="Old Grocery Card ID"
+                      disabled={form.applicationType === "firstTime"}
+                      value={form.oldGroceryCardId || ""}
+                      onChange={(e) => update("oldGroceryCardId", e.target.value.toUpperCase())}
+                      onBlur={() => handleBlur("oldGroceryCardId")}
+                    />
+                    {touched.oldGroceryCardId && errors.oldGroceryCardId && (
+                      <div className="wz-error-msg">{errors.oldGroceryCardId}</div>
+                    )}
+                  </div>
+                </>
+              ) : form.cardApplied?.includes("Liquor") ? (
+                <div className={`wz-field ${touched.oldLiquorCardId && errors.oldLiquorCardId ? "has-error" : ""}`}>
+                  <label
+                    className="wz-label"
+                    htmlFor="oldLiquorCardIdInput"
+                    style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                  >
+                    Old Liquor Card ID{" "}
+                    {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                  </label>
+                  <input
+                    id="oldLiquorCardIdInput"
+                    type="text"
+                    className={`wz-input ${touched.oldLiquorCardId && errors.oldLiquorCardId ? "input-error" : ""}`}
+                    placeholder="Old Liquor Card ID"
+                    disabled={form.applicationType === "firstTime"}
+                    value={form.oldLiquorCardId || ""}
+                    onChange={(e) => update("oldLiquorCardId", e.target.value.toUpperCase())}
+                    onBlur={() => handleBlur("oldLiquorCardId")}
+                  />
+                  {touched.oldLiquorCardId && errors.oldLiquorCardId && (
+                    <div className="wz-error-msg">{errors.oldLiquorCardId}</div>
+                  )}
+                </div>
+              ) : form.cardApplied?.includes("Grocery") ? (
+                <div className={`wz-field ${touched.oldGroceryCardId && errors.oldGroceryCardId ? "has-error" : ""}`}>
+                  <label
+                    className="wz-label"
+                    htmlFor="oldGroceryCardIdInput"
+                    style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                  >
+                    Old Grocery Card ID{" "}
+                    {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                  </label>
+                  <input
+                    id="oldGroceryCardIdInput"
+                    type="text"
+                    className={`wz-input ${touched.oldGroceryCardId && errors.oldGroceryCardId ? "input-error" : ""}`}
+                    placeholder="Old Grocery Card ID"
+                    disabled={form.applicationType === "firstTime"}
+                    value={form.oldGroceryCardId || ""}
+                    onChange={(e) => update("oldGroceryCardId", e.target.value.toUpperCase())}
+                    onBlur={() => handleBlur("oldGroceryCardId")}
+                  />
+                  {touched.oldGroceryCardId && errors.oldGroceryCardId && (
+                    <div className="wz-error-msg">{errors.oldGroceryCardId}</div>
+                  )}
+                </div>
+              ) : (
+                <div className={`wz-field ${touched.oldLiquorGroceryCardId && errors.oldLiquorGroceryCardId ? "has-error" : ""}`}>
+                  <label
+                    className="wz-label"
+                    htmlFor="oldCardIdInput"
+                    style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                  >
+                    In case of Reapplying enter Old Liquor / Grocery Card ID{" "}
+                    {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                  </label>
+                  <input
+                    id="oldCardIdInput"
+                    type="text"
+                    className={`wz-input ${touched.oldLiquorGroceryCardId && errors.oldLiquorGroceryCardId ? "input-error" : ""}`}
+                    placeholder="Old Card ID"
+                    disabled={form.applicationType === "firstTime"}
+                    value={form.oldLiquorGroceryCardId || ""}
+                    onChange={(e) => update("oldLiquorGroceryCardId", e.target.value.toUpperCase())}
+                    onBlur={() => handleBlur("oldLiquorGroceryCardId")}
+                  />
+                  {touched.oldLiquorGroceryCardId && errors.oldLiquorGroceryCardId && (
+                    <div className="wz-error-msg">{errors.oldLiquorGroceryCardId}</div>
+                  )}
+                </div>
+              )
+            ) : (
+              <div className={`wz-field ${touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] ? "has-error" : ""}`}>
+                <label
+                  className="wz-label"
+                  htmlFor="oldCardIdInput"
+                  style={{ color: form.applicationType === "firstTime" ? "#9ca3af" : undefined }}
+                >
+                  {config.reapplyingOldCardLabel}{" "}
+                  {form.applicationType === "reapplying" && <span className="wz-required">*</span>}
+                </label>
+                <input
+                  id="oldCardIdInput"
+                  type="text"
+                  className={`wz-input ${touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] ? "input-error" : ""}`}
+                  placeholder="Old Card ID"
+                  disabled={form.applicationType === "firstTime"}
+                  value={form[config.reapplyingOldCardField] || ""}
+                  onChange={(e) => update(config.reapplyingOldCardField, e.target.value.toUpperCase())}
+                  onBlur={() => handleBlur(config.reapplyingOldCardField)}
+                />
+                {touched[config.reapplyingOldCardField] && errors[config.reapplyingOldCardField] && (
+                  <div className="wz-error-msg">{errors[config.reapplyingOldCardField]}</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+        )}
 
         {/* Service Record / Cadre Details */}
         <div className="wz-section">
@@ -406,7 +537,7 @@ export default function DynamicStepContent({
                   value="AGNIVEER"
                   readOnly
                   disabled
-                  style={{ background: "#f3f4f6", color: "#111827" }}
+                  style={{ background: "#f3f4f6", color: "#111827", fontWeight: 700 }}
                 />
               </div>
             ) : config.rankInputType === "select" ? (
@@ -619,13 +750,13 @@ export default function DynamicStepContent({
                   <>
                     <div className={`wz-field ${touched.ppoNumber && errors.ppoNumber ? "has-error" : ""}`}>
                       <label className="wz-label" htmlFor="ppoNumCivil">
-                        PPO No. (Mandatory for Retd. Pers./Widows/NOK) <span className="wz-required">*</span>
+                        PPO No. (Mandatory for Retd. Pers./Widows/NOK){form.statusOption !== "Retiring" ? <span className="wz-required">*</span> : <span style={{ fontSize: "11px", color: "#6b7280", marginLeft: 4 }}>(Optional for Retiring)</span>}
                       </label>
                       <input
                         id="ppoNumCivil"
                         type="text"
                         className={`wz-input ${touched.ppoNumber && errors.ppoNumber ? "input-error" : ""}`}
-                        placeholder="PPO Number"
+                        placeholder={form.statusOption === "Retiring" ? "PPO Number (If allotted)" : "PPO Number"}
                         value={form.ppoNumber || ""}
                         onChange={(e) => update("ppoNumber", e.target.value.toUpperCase())}
                         onBlur={() => handleBlur("ppoNumber")}
@@ -636,7 +767,7 @@ export default function DynamicStepContent({
                     </div>
                     <div className={`wz-field ${touched.ppoDate && errors.ppoDate ? "has-error" : ""}`}>
                       <label className="wz-label" htmlFor="ppoDateCivil">
-                        PPO Date <span className="wz-required">*</span>
+                        PPO Date {form.statusOption !== "Retiring" ? <span className="wz-required">*</span> : <span style={{ fontSize: "11px", color: "#6b7280", marginLeft: 4 }}>(Optional for Retiring)</span>}
                       </label>
                       <input
                         id="ppoDateCivil"
@@ -738,32 +869,40 @@ export default function DynamicStepContent({
 
             {/* Service Dates based on Config */}
             {config.serviceDateLabels?.dateOfJoining && (
-              <div className="wz-field">
+              <div className={`wz-field ${touched.dateOfJoining && errors.dateOfJoining ? "has-error" : ""}`}>
                 <label className="wz-label" htmlFor="dateOfJoining">
-                  {config.serviceDateLabels.dateOfJoining}
+                  {config.serviceDateLabels.dateOfJoining} {isJoiningRequired && <span className="wz-required">*</span>}
                 </label>
                 <input
                   id="dateOfJoining"
                   type="date"
-                  className="wz-input"
+                  className={`wz-input ${touched.dateOfJoining && errors.dateOfJoining ? "input-error" : ""}`}
                   value={form.dateOfJoining || ""}
                   onChange={(e) => update("dateOfJoining", e.target.value)}
+                  onBlur={() => handleBlur("dateOfJoining")}
                 />
+                {touched.dateOfJoining && errors.dateOfJoining && (
+                  <div className="wz-error-msg">{errors.dateOfJoining}</div>
+                )}
               </div>
             )}
 
             {config.serviceDateLabels?.likelyCommissioningDate && (
-              <div className="wz-field">
+              <div className={`wz-field ${touched.likelyCommissioningDate && errors.likelyCommissioningDate ? "has-error" : ""}`}>
                 <label className="wz-label" htmlFor="likelyCommissioningDate">
-                  {config.serviceDateLabels.likelyCommissioningDate}
+                  {config.serviceDateLabels.likelyCommissioningDate} {isLikelyCommissioningRequired && <span className="wz-required">*</span>}
                 </label>
                 <input
                   id="likelyCommissioningDate"
                   type="date"
-                  className="wz-input"
+                  className={`wz-input ${touched.likelyCommissioningDate && errors.likelyCommissioningDate ? "input-error" : ""}`}
                   value={form.likelyCommissioningDate || ""}
                   onChange={(e) => update("likelyCommissioningDate", e.target.value)}
+                  onBlur={() => handleBlur("likelyCommissioningDate")}
                 />
+                {touched.likelyCommissioningDate && errors.likelyCommissioningDate && (
+                  <div className="wz-error-msg">{errors.likelyCommissioningDate}</div>
+                )}
               </div>
             )}
 
@@ -817,17 +956,21 @@ export default function DynamicStepContent({
             )}
 
             {config.serviceDateLabels?.dateOfRetirement && (
-              <div className="wz-field">
+              <div className={`wz-field ${touched.dateOfRetirement && errors.dateOfRetirement ? "has-error" : ""}`}>
                 <label className="wz-label" htmlFor="dateOfRetirement">
-                  {config.serviceDateLabels.dateOfRetirement}
+                  {config.serviceDateLabels.dateOfRetirement} {isRetirementRequired && <span className="wz-required">*</span>}
                 </label>
                 <input
                   id="dateOfRetirement"
                   type="date"
-                  className="wz-input"
+                  className={`wz-input ${touched.dateOfRetirement && errors.dateOfRetirement ? "input-error" : ""}`}
                   value={form.dateOfRetirement || ""}
                   onChange={(e) => update("dateOfRetirement", e.target.value)}
+                  onBlur={() => handleBlur("dateOfRetirement")}
                 />
+                {touched.dateOfRetirement && errors.dateOfRetirement && (
+                  <div className="wz-error-msg">{errors.dateOfRetirement}</div>
+                )}
               </div>
             )}
 
@@ -1108,28 +1251,39 @@ export default function DynamicStepContent({
   // --------------------------------------------------------------------------
   if (step === 7) {
     const relations = config.dependentRelations || ["Spouse", "Daughter", "Son", "Mother", "Father"];
+    const isDep1Required = form.cardApplied?.includes("Dependent1");
+    const isDep2Required = form.cardApplied?.includes("Dependent2");
+
     return (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         {/* Dependent 1 */}
         <div className="wz-dep-card">
           <div className="wz-section-heading">
             <span className="wz-section-heading-icon">👤</span>
-            Dependent 1 Details
+            Dependent 1 Details {isDep1Required && <span style={{ fontSize: 13, color: "#dc2626", fontWeight: "normal", marginLeft: 6 }}>(Required as card selected)</span>}
           </div>
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label" htmlFor="dep1name">Full Name</label>
+          <div className={`wz-field ${touched.dependent1Name && errors.dependent1Name ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label" htmlFor="dep1name">
+              Full Name {isDep1Required && <span className="wz-required">*</span>}
+            </label>
             <input
               id="dep1name"
               type="text"
-              className="wz-input"
+              className={`wz-input ${touched.dependent1Name && errors.dependent1Name ? "input-error" : ""}`}
               placeholder="Dependent 1 full name"
               value={form.dependent1Name || ""}
               onChange={(e) => update("dependent1Name", e.target.value.toUpperCase())}
+              onBlur={() => handleBlur("dependent1Name")}
             />
+            {touched.dependent1Name && errors.dependent1Name && (
+              <div className="wz-error-msg">{errors.dependent1Name}</div>
+            )}
           </div>
 
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label">Relation with Primary Applicant</label>
+          <div className={`wz-field ${touched.dependent1Relation && errors.dependent1Relation ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label">
+              Relation with Primary Applicant {isDep1Required && <span className="wz-required">*</span>}
+            </label>
             <div className="wz-option-group">
               {relations.map((r) => (
                 <label key={r} className={`wz-option-pill ${form.dependent1Relation === r ? "selected" : ""}`}>
@@ -1138,22 +1292,32 @@ export default function DynamicStepContent({
                     name="dep1relationRadio"
                     checked={form.dependent1Relation === r}
                     onChange={() => update("dependent1Relation", r)}
+                    onBlur={() => handleBlur("dependent1Relation")}
                   />
                   {r}
                 </label>
               ))}
             </div>
+            {touched.dependent1Relation && errors.dependent1Relation && (
+              <div className="wz-error-msg">{errors.dependent1Relation}</div>
+            )}
           </div>
 
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label" htmlFor="dep1dob">Date of Birth (DD/MM/YYYY)</label>
+          <div className={`wz-field ${touched.dependent1Dob && errors.dependent1Dob ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label" htmlFor="dep1dob">
+              Date of Birth (DD/MM/YYYY) {isDep1Required && <span className="wz-required">*</span>}
+            </label>
             <input
               id="dep1dob"
               type="date"
-              className="wz-input"
+              className={`wz-input ${touched.dependent1Dob && errors.dependent1Dob ? "input-error" : ""}`}
               value={form.dependent1Dob || ""}
               onChange={(e) => update("dependent1Dob", e.target.value)}
+              onBlur={() => handleBlur("dependent1Dob")}
             />
+            {touched.dependent1Dob && errors.dependent1Dob && (
+              <div className="wz-error-msg">{errors.dependent1Dob}</div>
+            )}
           </div>
 
           {errors.dependent1 && (
@@ -1165,22 +1329,30 @@ export default function DynamicStepContent({
         <div className="wz-dep-card">
           <div className="wz-section-heading">
             <span className="wz-section-heading-icon">👤</span>
-            Dependent 2 Details
+            Dependent 2 Details {isDep2Required && <span style={{ fontSize: 13, color: "#dc2626", fontWeight: "normal", marginLeft: 6 }}>(Required as card selected)</span>}
           </div>
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label" htmlFor="dep2name">Full Name</label>
+          <div className={`wz-field ${touched.dependent2Name && errors.dependent2Name ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label" htmlFor="dep2name">
+              Full Name {isDep2Required && <span className="wz-required">*</span>}
+            </label>
             <input
               id="dep2name"
               type="text"
-              className="wz-input"
+              className={`wz-input ${touched.dependent2Name && errors.dependent2Name ? "input-error" : ""}`}
               placeholder="Dependent 2 full name"
               value={form.dependent2Name || ""}
               onChange={(e) => update("dependent2Name", e.target.value.toUpperCase())}
+              onBlur={() => handleBlur("dependent2Name")}
             />
+            {touched.dependent2Name && errors.dependent2Name && (
+              <div className="wz-error-msg">{errors.dependent2Name}</div>
+            )}
           </div>
 
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label">Relation with Primary Applicant</label>
+          <div className={`wz-field ${touched.dependent2Relation && errors.dependent2Relation ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label">
+              Relation with Primary Applicant {isDep2Required && <span className="wz-required">*</span>}
+            </label>
             <div className="wz-option-group">
               {relations.map((r) => (
                 <label key={r} className={`wz-option-pill ${form.dependent2Relation === r ? "selected" : ""}`}>
@@ -1189,22 +1361,32 @@ export default function DynamicStepContent({
                     name="dep2relationRadio"
                     checked={form.dependent2Relation === r}
                     onChange={() => update("dependent2Relation", r)}
+                    onBlur={() => handleBlur("dependent2Relation")}
                   />
                   {r}
                 </label>
               ))}
             </div>
+            {touched.dependent2Relation && errors.dependent2Relation && (
+              <div className="wz-error-msg">{errors.dependent2Relation}</div>
+            )}
           </div>
 
-          <div className="wz-field" style={{ marginBottom: 14 }}>
-            <label className="wz-label" htmlFor="dep2dob">Date of Birth (DD/MM/YYYY)</label>
+          <div className={`wz-field ${touched.dependent2Dob && errors.dependent2Dob ? "has-error" : ""}`} style={{ marginBottom: 14 }}>
+            <label className="wz-label" htmlFor="dep2dob">
+              Date of Birth (DD/MM/YYYY) {isDep2Required && <span className="wz-required">*</span>}
+            </label>
             <input
               id="dep2dob"
               type="date"
-              className="wz-input"
+              className={`wz-input ${touched.dependent2Dob && errors.dependent2Dob ? "input-error" : ""}`}
               value={form.dependent2Dob || ""}
               onChange={(e) => update("dependent2Dob", e.target.value)}
+              onBlur={() => handleBlur("dependent2Dob")}
             />
+            {touched.dependent2Dob && errors.dependent2Dob && (
+              <div className="wz-error-msg">{errors.dependent2Dob}</div>
+            )}
           </div>
 
           {errors.dependent2 && (

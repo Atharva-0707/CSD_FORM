@@ -49,7 +49,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
             <div className="pr-main-subtitle">{config.officialSubtitle}</div>
           )}
           {config.headerNote && (
-            <div className="pr-header-note" style={{ fontSize: "8px", fontStyle: "italic", marginTop: "1px" }}>
+            <div className="pr-header-note" style={{ fontSize: "8px", fontStyle: "italic", marginTop: "1px", textAlign: "center", width: "100%" }}>
               {config.headerNote}
             </div>
           )}
@@ -89,13 +89,13 @@ export default function PrintableApplication({ form, selectedFormType }) {
           {/* Primary Applicant Signature Area */}
           <div className="pr-sig-box">
             <div className="pr-sig-box-header">Sign inside the box (Primary Applicant only)</div>
-            <div className="pr-sig-blank-area">
-              <span className="pr-sig-placeholder-label">Physical Signature of Primary Applicant</span>
-            </div>
-            <div className="pr-apply-type-row">
-              <span className="pr-apply-type-opt">{form.applicationType === "firstTime" ? "☑" : "☐"} *Applying 1st time</span>
-              <span className="pr-apply-type-opt">{form.applicationType === "reapplying" ? "☑" : "☐"} *Reapplying</span>
-            </div>
+            <div className="pr-sig-blank-area"></div>
+            {!config.isCivilDefence && (
+              <div className="pr-apply-type-row">
+                <span className="pr-apply-type-opt">{form.applicationType === "firstTime" ? "☑" : "☐"} *Applying 1st time</span>
+                <span className="pr-apply-type-opt">{form.applicationType === "reapplying" ? "☑" : "☐"} *Reapplying</span>
+              </div>
+            )}
             <div className="pr-sig-box-footer">(If applying for both categories, use two separate forms)</div>
           </div>
 
@@ -126,19 +126,31 @@ export default function PrintableApplication({ form, selectedFormType }) {
           <tbody>
             {/* Section 1: Application & URC Details */}
             <tr className="pr-section-header-row">
-              <td colSpan={4}>1. APPLICATION &amp; URC DETAILS</td>
+              <td colSpan={4}>
+                {selectedFormType === "cadetRecruit"
+                  ? "FOR USE OF URC STAFF"
+                  : "1. APPLICATION & URC DETAILS"}
+              </td>
             </tr>
             <tr>
               <td className="pr-field-cell">Application Date</td>
-              <td className="pr-val-cell font-bold">{isoToDisplay(form.applicationDate)}</td>
-              <td className="pr-field-cell">Application Type</td>
-              <td className="pr-val-cell">{appTypeDisplay}</td>
+              <td className="pr-val-cell font-bold" colSpan={config.isCivilDefence ? 3 : 1}>
+                {isoToDisplay(form.applicationDate)}
+              </td>
+              {!config.isCivilDefence && (
+                <>
+                  <td className="pr-field-cell">Application Type</td>
+                  <td className="pr-val-cell">{appTypeDisplay}</td>
+                </>
+              )}
             </tr>
-            {form.applicationType === "reapplying" && (
+            {!config.isCivilDefence && form.applicationType === "reapplying" && (
               <tr>
                 <td className="pr-field-cell">{config.reapplyingOldCardLabel}</td>
                 <td className="pr-val-cell font-bold" colSpan={3}>
-                  {getVal(form[config.reapplyingOldCardField])}
+                  {selectedFormType === "agniveer" && form.cardApplied?.includes("Liquor") && form.cardApplied?.includes("Grocery")
+                    ? `Liquor Card: ${getVal(form.oldLiquorCardId)} | Grocery Card: ${getVal(form.oldGroceryCardId)}`
+                    : getVal(form[config.reapplyingOldCardField] || form.oldLiquorCardId || form.oldGroceryCardId)}
                 </td>
               </tr>
             )}
@@ -169,7 +181,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
                   : "Rank / Designation"}
               </td>
               <td className="pr-val-cell font-bold">
-                {config.hasPayLevel ? getVal(form.payLevel) : getVal(form.substantiveRank || form.designation)}
+                {config.hasPayLevel ? getVal(form.payLevel) : selectedFormType === "agniveer" ? "AGNIVEER" : getVal(form.substantiveRank || form.designation)}
               </td>
             </tr>
 
@@ -236,7 +248,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
                 {config.isCivilDefence ? "Designation" : config.rankLabel || "Rank"}
               </td>
               <td className="pr-val-cell font-bold">
-                {getVal(form.substantiveRank || form.designation)}
+                {selectedFormType === "agniveer" ? "AGNIVEER" : getVal(form.substantiveRank || form.designation)}
               </td>
               <td className="pr-field-cell">
                 {config.isCivilDefence ? "Pay Account No." : "Personal Number"}
@@ -384,7 +396,8 @@ export default function PrintableApplication({ form, selectedFormType }) {
                 Date: <strong>{isoToDisplay(form.applicationDate)}</strong>
               </div>
               <div className="pr-receipt-stamp-block">
-                <span className="pr-receipt-stamp-placeholder">Signature &amp; Stamp of Canteen</span>
+                <div className="pr-receipt-stamp-frame" style={{ height: "20px" }}></div>
+                <div className="pr-receipt-stamp-title">Signature &amp; Stamp of Canteen</div>
               </div>
             </div>
           </div>
@@ -465,7 +478,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
                     <div className="pr-photo-box-footer">Use Gum. Don't Staple</div>
                   </div>
                   <div className="pr-dep-sig-box">
-                    <div className="pr-dep-sig-blank">Physical Signature</div>
+                    <div className="pr-dep-sig-blank"></div>
                     <div className="pr-dep-sig-label">Dependent 1 Signature</div>
                   </div>
                 </div>
@@ -477,7 +490,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
                     <div className="pr-photo-box-footer">Use Gum. Don't Staple</div>
                   </div>
                   <div className="pr-dep-sig-box">
-                    <div className="pr-dep-sig-blank">Physical Signature</div>
+                    <div className="pr-dep-sig-blank"></div>
                     <div className="pr-dep-sig-label">Dependent 2 Signature</div>
                   </div>
                 </div>
@@ -503,9 +516,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
               Date: <strong>{isoToDisplay(form.applicationDate)}</strong>
             </div>
             <div className="pr-decl-sig-col">
-              <div className="pr-decl-sig-box-frame" style={{ height: "26px" }}>
-                <span className="pr-decl-sig-label">Signature of Applicant</span>
-              </div>
+              <div className="pr-decl-sig-box-frame" style={{ height: "26px" }}></div>
               <div className="pr-decl-sig-title">*Signature of Applicant</div>
             </div>
           </div>
@@ -520,15 +531,13 @@ export default function PrintableApplication({ form, selectedFormType }) {
             </p>
             <div className="pr-countersigned-grid">
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "26px" }}>
-                  <span className="pr-cs-stamp-placeholder">{config.countersigned.roundStampLabel}</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "26px" }}></div>
+                <span className="pr-cs-stamp-placeholder">{config.countersigned.roundStampLabel}</span>
                 <div className="pr-cs-date-line">Date: ________________________</div>
               </div>
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "26px" }}>
-                  <span className="pr-cs-stamp-placeholder">{config.countersigned.signLabel}</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "26px" }}></div>
+                <span className="pr-cs-stamp-placeholder">{config.countersigned.signLabel}</span>
               </div>
             </div>
           </div>
@@ -543,15 +552,13 @@ export default function PrintableApplication({ form, selectedFormType }) {
             </p>
             <div className="pr-countersigned-grid">
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "26px" }}>
-                  <span className="pr-cs-stamp-placeholder">Designation &amp; Name of Competent Authority / Round Stamp</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "26px" }}></div>
+                <span className="pr-cs-stamp-placeholder">Designation &amp; Name of Competent Authority / Round Stamp</span>
                 <div className="pr-cs-date-line">Date: ________________________</div>
               </div>
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "26px" }}>
-                  <span className="pr-cs-stamp-placeholder">*Signature &amp; Stamp of Office of Competent Authority</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "26px" }}></div>
+                <span className="pr-cs-stamp-placeholder">*Signature &amp; Stamp of Office of Competent Authority</span>
                 <div className="pr-cs-sub-label">(Not below Director or Equivalent)</div>
               </div>
             </div>
@@ -567,15 +574,13 @@ export default function PrintableApplication({ form, selectedFormType }) {
             </p>
             <div className="pr-countersigned-grid">
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "24px" }}>
-                  <span className="pr-cs-stamp-placeholder">Round Stamp of Canteen</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "24px" }}></div>
+                <span className="pr-cs-stamp-placeholder">Round Stamp of Canteen</span>
                 <div className="pr-cs-date-line">Date: ________________________</div>
               </div>
               <div className="pr-cs-col">
-                <div className="pr-cs-stamp-box" style={{ height: "24px" }}>
-                  <span className="pr-cs-stamp-placeholder">*Signature &amp; Stamp of OIC URC</span>
-                </div>
+                <div className="pr-cs-stamp-box" style={{ height: "24px" }}></div>
+                <span className="pr-cs-stamp-placeholder">*Signature &amp; Stamp of OIC URC</span>
               </div>
             </div>
           </div>
