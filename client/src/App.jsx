@@ -524,8 +524,9 @@ export default function App() {
         return "";
       }
       case "captcha": {
-        if (!captchaInput || !captchaInput.trim()) return "CAPTCHA code is required.";
-        if (captcha.trim().toUpperCase() !== captchaInput.trim().toUpperCase()) {
+        const val = value !== undefined && value !== null && value !== "" ? value : captchaInput;
+        if (!val || !val.trim()) return "CAPTCHA code is required.";
+        if (captcha.trim() !== val.trim()) {
           return "CAPTCHA code does not match. Please try again.";
         }
         return "";
