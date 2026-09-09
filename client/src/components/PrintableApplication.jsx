@@ -3,9 +3,12 @@ import { FORM_CONFIGS } from "../formConfigs";
 
 function isoToDisplay(iso) {
   if (!iso) return "—";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
-    const [y, m, d] = iso.split("-");
-    return `${d}/${m}/${y}`;
+  if (typeof iso === "string") {
+    const datePart = iso.split(/[T ]/)[0];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      const [y, m, d] = datePart.split("-");
+      return `${d}/${m}/${y}`;
+    }
   }
   return iso;
 }
@@ -90,7 +93,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
           <div className="pr-sig-box">
             <div className="pr-sig-box-header">Sign inside the box (Primary Applicant only)</div>
             <div className="pr-sig-blank-area"></div>
-            {!config.isCivilDefence && (
+            {config.hasApplicationType !== false && (
               <div className="pr-apply-type-row">
                 <span className="pr-apply-type-opt">{form.applicationType === "firstTime" ? "☑" : "☐"} *Applying 1st time</span>
                 <span className="pr-apply-type-opt">{form.applicationType === "reapplying" ? "☑" : "☐"} *Reapplying</span>
@@ -134,17 +137,17 @@ export default function PrintableApplication({ form, selectedFormType }) {
             </tr>
             <tr>
               <td className="pr-field-cell">Application Date</td>
-              <td className="pr-val-cell font-bold" colSpan={config.isCivilDefence ? 3 : 1}>
+              <td className="pr-val-cell font-bold" colSpan={config.hasApplicationType !== false ? 1 : 3}>
                 {isoToDisplay(form.applicationDate)}
               </td>
-              {!config.isCivilDefence && (
+              {config.hasApplicationType !== false && (
                 <>
                   <td className="pr-field-cell">Application Type</td>
                   <td className="pr-val-cell">{appTypeDisplay}</td>
                 </>
               )}
             </tr>
-            {!config.isCivilDefence && form.applicationType === "reapplying" && (
+            {config.hasApplicationType !== false && form.applicationType === "reapplying" && (
               <tr>
                 <td className="pr-field-cell">{config.reapplyingOldCardLabel}</td>
                 <td className="pr-val-cell font-bold" colSpan={3}>
@@ -156,9 +159,9 @@ export default function PrintableApplication({ form, selectedFormType }) {
             )}
             <tr>
               <td className="pr-field-cell">URC No.</td>
-              <td className="pr-val-cell font-bold">{getVal(form.urcNo)}</td>
+              <td className="pr-val-cell font-bold">-</td>
               <td className="pr-field-cell">URC Name</td>
-              <td className="pr-val-cell font-bold">{getVal(form.urcName)}</td>
+              <td className="pr-val-cell font-bold">-</td>
             </tr>
 
             {/* Section 2: Service & Card Particulars */}
@@ -386,7 +389,7 @@ export default function PrintableApplication({ form, selectedFormType }) {
               {config.receiptLines?.showCardsAppliedFrom && (
                 <>No. of canteen smart card applied from / for: <span className="pr-receipt-fill">{getVal(form.cardApplied) !== "—" ? form.cardApplied.join(", ") : "Liquor / Grocery"}</span> </>
               )}
-              URC Code: <span className="pr-receipt-fill">{getVal(form.urcNo) !== "—" ? form.urcNo : "________"}</span> Canteen Name: <span className="pr-receipt-fill">{getVal(form.urcName) !== "—" ? form.urcName : "____________________"}</span>
+              URC Code: <span className="pr-receipt-fill">________</span> Canteen Name: <span className="pr-receipt-fill">____________________</span>
             </div>
             <div className="pr-receipt-row">
               Payment done via: <span className="pr-receipt-fill">{getVal(form.receiptPaymentDoneVia) !== "—" ? form.receiptPaymentDoneVia : "Cash / Card / UTR"}</span> &bull; Cash/Instrument/UTR No: <span className="pr-receipt-fill">{getVal(form.receiptCashInstrumentUtrNo) !== "—" ? form.receiptCashInstrumentUtrNo : "____________________"}</span> &bull; Date: <span className="pr-receipt-fill">__________</span> &bull; Bank: <span className="pr-receipt-fill">{getVal(form.bankName) !== "—" ? form.bankName : "________________"}</span> &bull; Branch: <span className="pr-receipt-fill">{getVal(form.branch) !== "—" ? form.branch : "________________"}</span>

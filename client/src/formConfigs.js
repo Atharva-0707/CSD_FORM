@@ -43,7 +43,7 @@ export const FORM_CATEGORIES = [
     title: "FOR RETIRING ARMED FORCES PERSON CHANGE OF CATEGORY - SERVING TO ESM",
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(For Retiring Armed Forces Person Change of Category - Serving to ESM)",
-    headerNote: "To be filled 90 days before Retirement. Please read instructions carefully before filling Application Form.",
+    headerNote: "(To be filled 90 days before Retirement)",
     description: "For retiring Armed Forces personnel changing category from Serving to ESM.",
     guidance: [
       "To be filled 90 days prior to retirement date.",
@@ -146,6 +146,7 @@ export const FORM_CONFIGS = {
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(FOR SERVING CADETS/RECRUITS IN ALL THREE SERVICES)",
     headerNote: "Note: Applicable for person holding Canteen Smart Cards of previous service (Like ACC/SCO).",
+    hasApplicationType: true,
     hasAddressStep: false,
     hasDependentsStep: false,
     photos: [
@@ -215,6 +216,7 @@ export const FORM_CONFIGS = {
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM - AGNIVEER",
     officialSubtitle: "",
     headerNote: "",
+    hasApplicationType: true,
     hasAddressStep: false,
     hasDependentsStep: false,
     photos: [
@@ -283,7 +285,8 @@ export const FORM_CONFIGS = {
     prefix: "OE",
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(For Retiring Armed Forces Person Change of Category - Serving to ESM)",
-    headerNote: "To be filled 90 days before Retirement. Please read instructions carefully before filling Application Form. Fields marked* are mandatory. Fill in CAPITAL only.",
+    headerNote: "(To be filled 90 days before Retirement)",
+    hasApplicationType: false,
     hasAddressStep: true,
     hasDependentsStep: true,
     dependentRelations: ["Son", "Daughter", "Father", "Mother", "Wife"],
@@ -370,6 +373,7 @@ export const FORM_CONFIGS = {
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(FOR CIVIL DEFENCE EMPLOYEES (RETIRED, RETIRING & FAMILY PENSIONERS))",
     headerNote: "",
+    hasApplicationType: false,
     hasAddressStep: true,
     hasDependentsStep: false,
     hasStatusCheckboxes: true,
@@ -442,6 +446,7 @@ export const FORM_CONFIGS = {
     officialSubtitle:
       "(FOR SERVING CIVIL DEFENCE EMPLOYEES PAID OUT OF DEFENCE ESTIMATES/ ON DEPUTATION/OUT ON DEPUTATION FROM DEFENCE C)",
     headerNote: "",
+    hasApplicationType: false,
     hasAddressStep: true,
     hasDependentsStep: false,
     photos: [
@@ -525,6 +530,7 @@ export const FORM_CONFIGS = {
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(FOR ESM & PENSIONER WIDOW/NOK)",
     headerNote: "",
+    hasApplicationType: true,
     hasAddressStep: true,
     hasDependentsStep: true,
     dependentRelations: ["Spouse", "Daughter", "Son", "Mother", "Father"],
@@ -613,6 +619,7 @@ export const FORM_CONFIGS = {
     officialTitle: "CANTEEN SMART CARD APPLICATION FORM",
     officialSubtitle: "(FOR SERVING ARMED FORCES PERSONNEL)",
     headerNote: "",
+    hasApplicationType: true,
     hasAddressStep: false, // In PDF Page 14, page starts directly with Dependent Details!
     hasDependentsStep: true,
     dependentRelations: ["Spouse", "Daughter", "Son", "Mother", "Father"],

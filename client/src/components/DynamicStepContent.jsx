@@ -333,7 +333,7 @@ export default function DynamicStepContent({
     return (
       <>
         {/* Application Type */}
-        {!config.isCivilDefence && (
+        {config.hasApplicationType !== false && (
           <div className="wz-section">
             <div className="wz-section-heading">
               <span className="wz-section-heading-icon">📝</span>
@@ -920,10 +920,10 @@ export default function DynamicStepContent({
                     update("dateOfEnrolment", e.target.value);
                     // Automatically calculate Date of Release (4 years from DOE) if empty
                     if (e.target.value && !form.dateOfRelease) {
-                      const d = new Date(e.target.value);
-                      if (!isNaN(d.getTime())) {
-                        d.setFullYear(d.getFullYear() + 4);
-                        const relIso = d.toISOString().split("T")[0];
+                      const parts = e.target.value.split("-");
+                      if (parts.length === 3) {
+                        const y = parseInt(parts[0], 10) + 4;
+                        const relIso = `${y}-${parts[1]}-${parts[2]}`;
                         update("dateOfRelease", relIso);
                       }
                     }
@@ -1082,13 +1082,13 @@ export default function DynamicStepContent({
             {config.hasNokName ? (
               <div className={`wz-field ${touched.nokName && errors.nokName ? "has-error" : ""}`}>
                 <label className="wz-label" htmlFor="nokName">
-                  Name of NOK <span className="wz-required">*</span>
+                  Name of NOK {selectedFormType !== "agniveer" && <span className="wz-required">*</span>}
                 </label>
                 <input
                   id="nokName"
                   type="text"
                   className={`wz-input ${touched.nokName && errors.nokName ? "input-error" : ""}`}
-                  placeholder="Next of Kin Name"
+                  placeholder={selectedFormType === "agniveer" ? "Next of Kin Name (Optional)" : "Next of Kin Name"}
                   value={form.nokName || ""}
                   onChange={(e) => update("nokName", e.target.value.toUpperCase())}
                   onBlur={() => handleBlur("nokName")}
@@ -1100,7 +1100,7 @@ export default function DynamicStepContent({
             ) : (
               <div className={`wz-field ${touched.spouseNokName && errors.spouseNokName ? "has-error" : ""}`}>
                 <label className="wz-label" htmlFor="spouseNokName">
-                  Name of Spouse / NOK
+                  Name of Spouse / NOK <span className="wz-required">*</span>
                 </label>
                 <input
                   id="spouseNokName"

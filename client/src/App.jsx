@@ -91,8 +91,36 @@ export function validateDOB(dateStr, isRequired = true) {
   return validateApplicantDOB(dateStr, isRequired);
 }
 
+// Reusable date-only helper functions (Calendar safe, timezone independent)
+export function normalizeDateOnly(dateStr) {
+  if (!dateStr || typeof dateStr !== "string") return "";
+  const trimmed = dateStr.trim();
+  const datePart = trimmed.split(/[T ]/)[0];
+  return /^\d{4}-\d{2}-\d{2}$/.test(datePart) ? datePart : "";
+}
+
+export function compareDateOnly(dateA, dateB) {
+  const normA = normalizeDateOnly(dateA);
+  const normB = normalizeDateOnly(dateB);
+  if (!normA || !normB) return 0;
+  if (normA < normB) return -1;
+  if (normA > normB) return 1;
+  return 0;
+}
+
+export function validateJoiningDateAgainstDOB(dojStr, dobStr, isEnrolment = false) {
+  const normDoj = normalizeDateOnly(dojStr);
+  const normDob = normalizeDateOnly(dobStr);
+  if (normDoj && normDob && compareDateOnly(normDoj, normDob) < 0) {
+    return isEnrolment
+      ? "Date of Enrolment cannot be before Date of Birth."
+      : "Date of Joining cannot be before Date of Birth.";
+  }
+  return "";
+}
+
 // Global reusable Date of Joining validation
-export function validateDateOfJoining(dateStr, isRequired = false) {
+export function validateDateOfJoining(dateStr, isRequired = false, dobStr = "") {
   if (!dateStr || !dateStr.trim()) {
     if (isRequired) return "Date of Joining is required.";
     return "";
@@ -100,6 +128,10 @@ export function validateDateOfJoining(dateStr, isRequired = false) {
   const val = dateStr.trim();
   if (!isValidCalendarDate(val)) {
     return "Please enter a valid Date of Joining.";
+  }
+  if (dobStr) {
+    const dobError = validateJoiningDateAgainstDOB(val, dobStr, false);
+    if (dobError) return dobError;
   }
   return "";
 }
@@ -136,8 +168,8 @@ export function validateDateOfRetirement(dateStr, isRequired = false, dojStr = "
   return "";
 }
 
-// Agniveer Date of Enrolment (cannot be in the past: DOE >= today)
-export function validateDateOfEnrolment(dateStr, isRequired = true) {
+// Agniveer Date of Enrolment (cannot be in the past: DOE >= today; DOE >= DOB)
+export function validateDateOfEnrolment(dateStr, isRequired = true, dobStr = "") {
   if (!dateStr || !dateStr.trim()) {
     if (isRequired) return "Date of Enrolment is required.";
     return "";
@@ -145,6 +177,10 @@ export function validateDateOfEnrolment(dateStr, isRequired = true) {
   const val = dateStr.trim();
   if (!isValidCalendarDate(val)) {
     return "Please enter a valid Date of Enrolment.";
+  }
+  if (dobStr) {
+    const dobError = validateJoiningDateAgainstDOB(val, dobStr, true);
+    if (dobError) return dobError;
   }
   const today = getTodayLocalDate();
   if (val < today) {
@@ -184,11 +220,14 @@ export function validateURC(field, value) {
 }
 
 // Date conversion & display helpers
-function isoToDisplay(iso) {
+export function isoToDisplay(iso) {
   if (!iso) return "—";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
-    const [y, m, d] = iso.split("-");
-    return `${d}/${m}/${y}`;
+  if (typeof iso === "string") {
+    const datePart = iso.split(/[T ]/)[0];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      const [y, m, d] = datePart.split("-");
+      return `${d}/${m}/${y}`;
+    }
   }
   return iso;
 }
@@ -395,10 +434,15 @@ export default function App() {
   const handleCategorySelect = (categoryId) => {
     if (categoryId === form.selectedFormType) return;
 
-    const isTargetCivil = categoryId === "civilDefenceRetired" || categoryId === "civilDefenceServing";
+    // Regenerate CAPTCHA, clear input, error, and touched state
+    generateCaptcha();
+    setCaptchaInput("");
+
+    const targetConfig = FORM_CONFIGS[categoryId];
+    const targetHasNoAppType = targetConfig?.hasApplicationType === false;
 
     setForm((prev) => {
-      const civilOverrides = isTargetCivil
+      const appTypeOverrides = targetHasNoAppType
         ? {
             applicationType: "",
             oldLiquorGroceryCardId: "",
@@ -417,7 +461,7 @@ export default function App() {
         applicationDate: prev.applicationDate || getTodayIsoDate(),
         selectedFormType: categoryId,
         substantiveRank: categoryId === "agniveer" ? "AGNIVEER" : "",
-        ...civilOverrides,
+        ...appTypeOverrides,
 
         // Common personal details
         fullName: prev.fullName,
@@ -439,22 +483,37 @@ export default function App() {
       };
     });
 
-    if (isTargetCivil) {
-      setErrors((prev) => {
-        const next = { ...prev, applicationType: "" };
+    setErrors((prev) => {
+      const next = { ...prev, captcha: "", selectedFormType: "" };
+      if (targetHasNoAppType) {
+        next.applicationType = "";
         OLD_CARD_FIELDS.forEach((f) => { next[f] = ""; });
-        return next;
-      });
-      setTouched((prev) => {
-        const next = { ...prev, applicationType: false };
-        OLD_CARD_FIELDS.forEach((f) => { next[f] = false; });
-        return next;
-      });
-    }
+      }
+      const catFields = [
+        "nokName", "spouseNokName", "dateOfJoining", "likelyCommissioningDate",
+        "dateOfRetirement", "dateOfEnrolment", "dateOfRelease", "heldCardNo",
+        "ppoNumber", "ppoDate", "cadreOrganisation", "currentDept", "payAccountNo",
+        "substantiveRank", "designation"
+      ];
+      catFields.forEach((f) => { next[f] = ""; });
+      return next;
+    });
 
-    if (errors.selectedFormType) {
-      setErrors((prev) => ({ ...prev, selectedFormType: "" }));
-    }
+    setTouched((prev) => {
+      const next = { ...prev, captcha: false };
+      if (targetHasNoAppType) {
+        next.applicationType = false;
+        OLD_CARD_FIELDS.forEach((f) => { next[f] = false; });
+      }
+      const catFields = [
+        "nokName", "spouseNokName", "dateOfJoining", "likelyCommissioningDate",
+        "dateOfRetirement", "dateOfEnrolment", "dateOfRelease", "heldCardNo",
+        "ppoNumber", "ppoDate", "cadreOrganisation", "currentDept", "payAccountNo",
+        "substantiveRank", "designation"
+      ];
+      catFields.forEach((f) => { next[f] = false; });
+      return next;
+    });
   };
 
   // Field validation logic
@@ -510,8 +569,7 @@ export default function App() {
         return "";
       }
       case "applicationType": {
-        const isCivil = activeConfig.isCivilDefence || allValues.selectedFormType === "civilDefenceRetired" || allValues.selectedFormType === "civilDefenceServing";
-        if (isCivil) return "";
+        if (activeConfig.hasApplicationType === false) return "";
         if (!value) return "Please select Application Type.";
         return "";
       }
@@ -519,8 +577,7 @@ export default function App() {
       case "oldGroceryCardId":
       case "oldLiquorCardId":
       case "oldLiquorGroceryCardId": {
-        const isCivil = activeConfig.isCivilDefence || allValues.selectedFormType === "civilDefenceRetired" || allValues.selectedFormType === "civilDefenceServing";
-        if (isCivil) return "";
+        if (activeConfig.hasApplicationType === false) return "";
         if (allValues.applicationType === "reapplying") {
           if (allValues.selectedFormType === "agniveer") {
             const hasLiquor = allValues.cardApplied?.includes("Liquor");
@@ -625,7 +682,7 @@ export default function App() {
         const isEsm = allValues.selectedFormType === "esmPensionerWidowNok" || allValues.selectedFormType === "retiringArmedForcesChangeCategory";
         const isServing = allValues.selectedFormType === "servingArmedForces";
         const isRequired = isCadet || isCivil || isEsm || isServing;
-        return validateDateOfJoining(value, isRequired);
+        return validateDateOfJoining(value, isRequired, allValues.dateOfBirth);
       }
       case "likelyCommissioningDate": {
         const isCadet = allValues.selectedFormType === "cadetRecruit";
@@ -640,7 +697,7 @@ export default function App() {
       }
       case "dateOfEnrolment": {
         const isAgniveer = allValues.selectedFormType === "agniveer";
-        return validateDateOfEnrolment(value, isAgniveer);
+        return validateDateOfEnrolment(value, isAgniveer, allValues.dateOfBirth);
       }
       case "dateOfRelease": {
         const isAgniveer = allValues.selectedFormType === "agniveer";
@@ -682,8 +739,26 @@ export default function App() {
         return "";
       }
       case "nokName": {
+        if (allValues.selectedFormType === "agniveer") return "";
         if (activeConfig.hasNokName && (!value || !value.trim())) {
           return "Name of NOK is required.";
+        }
+        if (value && value.trim() && !/^[A-Za-z\s.]+$/.test(value.trim())) {
+          return "Name of NOK should contain letters and spaces only.";
+        }
+        return "";
+      }
+      case "spouseNokName": {
+        if (activeConfig.hasSpouseNokName) {
+          if (!value || !value.trim()) {
+            return "Spouse / NOK Name is required.";
+          }
+          if (!/^[A-Za-z\s.]+$/.test(value.trim())) {
+            return "Spouse / NOK Name should contain letters and spaces only.";
+          }
+          if (value.trim().length < 2) {
+            return "Spouse / NOK Name must be at least 2 characters.";
+          }
         }
         return "";
       }
@@ -833,10 +908,15 @@ export default function App() {
         "gender",
         "fatherName",
       ];
-      if (!isCivil) {
+      if (activeConfig.hasApplicationType !== false) {
         fieldsToValidate.push("applicationType");
       }
-      if (activeConfig.hasNokName) fieldsToValidate.push("nokName");
+      if (activeConfig.hasNokName && form.selectedFormType !== "agniveer") {
+        fieldsToValidate.push("nokName");
+      }
+      if (activeConfig.hasSpouseNokName) {
+        fieldsToValidate.push("spouseNokName");
+      }
       if (activeConfig.rankInputType === "text" || activeConfig.rankInputType === "select") {
         if (form.selectedFormType !== "agniveer") {
           fieldsToValidate.push("substantiveRank");
@@ -870,7 +950,7 @@ export default function App() {
       }
 
       // Reapplying old card validation
-      if (!isCivil && form.applicationType === "reapplying") {
+      if (activeConfig.hasApplicationType !== false && form.applicationType === "reapplying") {
         if (form.selectedFormType === "agniveer") {
           const hasLiquor = form.cardApplied?.includes("Liquor");
           const hasGrocery = form.cardApplied?.includes("Grocery");
@@ -922,7 +1002,18 @@ export default function App() {
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const err = validateField(field, form[field]);
-    setErrors((prev) => ({ ...prev, [field]: err }));
+    setErrors((prev) => {
+      const next = { ...prev, [field]: err };
+      if (field === "dateOfBirth") {
+        if (form.dateOfJoining || touched.dateOfJoining) {
+          next.dateOfJoining = validateField("dateOfJoining", form.dateOfJoining, form);
+        }
+        if (form.dateOfEnrolment || touched.dateOfEnrolment) {
+          next.dateOfEnrolment = validateField("dateOfEnrolment", form.dateOfEnrolment, form);
+        }
+      }
+      return next;
+    });
   };
 
   const goToNextStep = (currentStepNum) => {
@@ -978,6 +1069,8 @@ export default function App() {
 
         if (!merged.applicationDate) {
           merged.applicationDate = getTodayIsoDate();
+        } else {
+          merged.applicationDate = normalizeDateOnly(merged.applicationDate) || getTodayIsoDate();
         }
 
         if (merged.selectedFormType === "agniveer" && !merged.substantiveRank) {
@@ -992,8 +1085,12 @@ export default function App() {
           merged.oldLiquorCardId = "";
         }
 
-        // For Civil Defence categories, ensure applicationType is cleared and old cards are removed
-        if (merged.selectedFormType === "civilDefenceRetired" || merged.selectedFormType === "civilDefenceServing") {
+        // For categories without applicationType (Retiring Armed Forces and Civil Defence), ensure applicationType is cleared and old cards are removed
+        if (
+          merged.selectedFormType === "retiringArmedForcesChangeCategory" ||
+          merged.selectedFormType === "civilDefenceRetired" ||
+          merged.selectedFormType === "civilDefenceServing"
+        ) {
           merged.applicationType = "";
           OLD_CARD_FIELDS.forEach((f) => { merged[f] = ""; });
         }
@@ -1086,6 +1183,31 @@ export default function App() {
     }
 
     setForm((current) => ({ ...current, [key]: value }));
+
+    // Immediate cross-field validation for DOB, DOJ, and DOE
+    if (key === "dateOfBirth") {
+      const nextValues = { ...form, [key]: value };
+      const dobErr = validateField("dateOfBirth", value, nextValues);
+      setErrors((prev) => {
+        const next = { ...prev, dateOfBirth: dobErr };
+        if (form.dateOfJoining || touched.dateOfJoining) {
+          next.dateOfJoining = validateField("dateOfJoining", form.dateOfJoining, nextValues);
+        }
+        if (form.dateOfEnrolment || touched.dateOfEnrolment) {
+          next.dateOfEnrolment = validateField("dateOfEnrolment", form.dateOfEnrolment, nextValues);
+        }
+        return next;
+      });
+      return;
+    }
+
+    if (key === "dateOfJoining" || key === "dateOfEnrolment") {
+      const nextValues = { ...form, [key]: value };
+      const err = validateField(key, value, nextValues);
+      setErrors((prev) => ({ ...prev, [key]: err }));
+      return;
+    }
+
     if (errors[key]) {
       const err = validateField(key, value, { ...form, [key]: value });
       setErrors((prev) => ({ ...prev, [key]: err }));

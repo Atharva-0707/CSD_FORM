@@ -2599,7 +2599,7 @@ body {
 /* Top 4-Box Section on Page 1 (Matching Original Form Proportions) */
 .pr-top-boxes-grid {
   display: grid;
-  grid-template-columns: 24% 27% 29% 20%;
+  grid-template-columns: 26% 27% 32% 15%;
   gap: 7px;
   margin-bottom: 2px;
 }
@@ -2718,23 +2718,24 @@ body {
 }
 
 .pr-appnum-box-header {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   text-transform: uppercase;
   color: #374151;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .pr-appnum-value {
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 800;
   color: #000000;
-  letter-spacing: 0.5px;
-  padding: 3px 6px;
+  letter-spacing: 0.3px;
+  padding: 2px 4px;
   background: #ffffff;
   border: 1.2px solid #000000;
   border-radius: 3px;
-  width: 90%;
+  width: 92%;
+  box-sizing: border-box;
 }
 
 .pr-appnum-date {
